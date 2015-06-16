@@ -3,16 +3,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class SampleController {
+public class RecipeController {
 
     private CommandGateway gateway;
 
     @Autowired
-    public SampleController(CommandGateway gateway) {
+    public RecipeController(CommandGateway gateway) {
         this.gateway = gateway;
     }
 
-    @RequestMapping(value = "/payment", method = RequestMethod.POST)
+    @RequestMapping(value = "/recipe", method = RequestMethod.POST)
     @ResponseBody
     public String createRecipe() {
         CreateRecipeCommand command = new CreateRecipeCommand("some id");
