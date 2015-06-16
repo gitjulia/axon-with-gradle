@@ -24,6 +24,11 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'org.springframework:spring-test:4.1.2.RELEASE'
     testCompile 'org.axonframework:axon-test:2.3.2'
+    testCompile 'com.jayway.restassured:rest-assured:2.4.0'
 }
 
 applicationDefaultJvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
+
+task functionalTests(type: Test) << {
+    include '**/FunctionalTest.*'
+}
