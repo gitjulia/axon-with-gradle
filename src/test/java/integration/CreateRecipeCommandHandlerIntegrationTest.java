@@ -1,9 +1,11 @@
+package integration;
+
 import org.axonframework.test.Fixtures;
 import org.axonframework.test.FixtureConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CreateRecipeCommandHandlerTest {
+public class CreateRecipeCommandHandlerIntegrationTest {
 
     FixtureConfiguration fixture;
 
