@@ -1,20 +1,20 @@
-apply plugin: 'java'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.9.RELEASE")
+    }
+}
 
-sourceCompatibility = 1.5
-version = '1.0'
+["spring-boot", "java"].each {
+    apply plugin: it
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-}
-
-task hello {
-    println 'hey yourself'
-}
-
-task count_to_four {
-    4.times { print "$it " }
+    compile("org.springframework.boot:spring-boot-starter-web:1.1.9.RELEASE")
 }
