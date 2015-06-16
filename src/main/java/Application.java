@@ -1,11 +1,9 @@
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
-import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
 import org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor;
 import org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean;
 import org.axonframework.contextsupport.spring.AnnotationDriven;
 import org.axonframework.eventhandling.EventBus;
-import org.axonframework.eventhandling.EventTemplate;
 import org.axonframework.eventhandling.SimpleEventBus;
 import org.axonframework.eventhandling.annotation.AnnotationEventListenerBeanPostProcessor;
 import org.axonframework.eventsourcing.EventSourcingRepository;
@@ -48,12 +46,12 @@ public class Application {
 
     @Bean
     public EventStore eventStore() {
-        return new FileSystemEventStore(new SimpleEventFileResolver(new File("./target/events")));
+        return new FileSystemEventStore(new SimpleEventFileResolver(new File("./events")));
     }
 
     @Bean
-    public EventSourcingRepository<Account> accountRepository(EventBus eventBus, EventStore eventStore) {
-        EventSourcingRepository<Account> repository = new EventSourcingRepository<>(Account.class, eventStore);
+    public EventSourcingRepository<Recipe> recipeRepository(EventBus eventBus, EventStore eventStore) {
+        EventSourcingRepository<Recipe> repository = new EventSourcingRepository<>(Recipe.class, eventStore);
         repository.setEventBus(eventBus);
         return repository;
     }
