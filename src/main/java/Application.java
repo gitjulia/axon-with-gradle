@@ -49,6 +49,11 @@ public class Application {
         return new FileSystemEventStore(new SimpleEventFileResolver(new File("./events")));
     }
 
+    @Bean(name = "recipeRepository")
+    public Repository<Recipe> recipeRepository() {
+        return ((DisruptorCommandBus) commandBus()).createRepository(new GenericAggregateFactory<>(Recipe.class));
+    }
+
     @Bean
     public EventSourcingRepository<Recipe> recipeRepository(EventBus eventBus, EventStore eventStore) {
         EventSourcingRepository<Recipe> repository = new EventSourcingRepository<>(Recipe.class, eventStore);
@@ -65,8 +70,7 @@ public class Application {
 
     @Bean
     public CommandBus commandBus() {
-        return new SimpleCommandBus();
-//    return new DisruptorCommandBus(eventStore(), eventBus());
+        return new DisruptorCommandBus(eventStore(), eventBus());
     }
 
     @Bean
