@@ -17,4 +17,13 @@ repositories {
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:1.1.9.RELEASE")
+    compile 'org.axonframework:axon-core:2.3.2'
+
+    testCompile 'junit:junit-dep:4.11'
+    testCompile 'org.easytesting:fest-assert-core:2.0M10'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'org.springframework:spring-test:4.1.2.RELEASE'
+    testCompile 'org.axonframework:axon-test:2.3.2'
 }
+
+applicationDefaultJvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
