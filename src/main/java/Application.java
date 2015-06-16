@@ -1,9 +1,11 @@
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
+import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
 import org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor;
 import org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean;
 import org.axonframework.contextsupport.spring.AnnotationDriven;
 import org.axonframework.eventhandling.EventBus;
+import org.axonframework.eventhandling.EventTemplate;
 import org.axonframework.eventhandling.SimpleEventBus;
 import org.axonframework.eventhandling.annotation.AnnotationEventListenerBeanPostProcessor;
 import org.axonframework.eventsourcing.EventSourcingRepository;
@@ -26,22 +28,17 @@ import java.io.File;
 public class Application {
 
     @Bean
-    public CommandGatewayFactoryBean commandGateway() {
+    public CommandGatewayFactoryBean commandGateway(CommandBus commandBus) {
         CommandGatewayFactoryBean factory = new CommandGatewayFactoryBean();
-        factory.setCommandBus(commandBus());
+        factory.setCommandBus(commandBus);
         return factory;
     }
 
     @Bean
-    public AnnotationCommandHandlerBeanPostProcessor annotationCommandHandlerBeanPostProcessor() {
+    public AnnotationCommandHandlerBeanPostProcessor annotationCommandHandlerBeanPostProcessor(CommandBus commandBus) {
         AnnotationCommandHandlerBeanPostProcessor handler = new AnnotationCommandHandlerBeanPostProcessor();
-        handler.setCommandBus(commandBus());
+        handler.setCommandBus(commandBus);
         return handler;
-    }
-
-    @Bean(name = "recipeRepository")
-    public Repository<Recipe> paymentRepository() {
-        return new EventSourcingRepository<>(Recipe.class, eventStore());
     }
 
     @Bean
@@ -51,19 +48,37 @@ public class Application {
 
     @Bean
     public EventStore eventStore() {
-        return new FileSystemEventStore(new SimpleEventFileResolver(new File("./events")));
+        return new FileSystemEventStore(new SimpleEventFileResolver(new File("./target/events")));
     }
 
     @Bean
-    public AnnotationEventListenerBeanPostProcessor annotationEventListenerBeanPostProcessor() {
-        AnnotationEventListenerBeanPostProcessor listener = new AnnotationEventListenerBeanPostProcessor();
-        listener.setEventBus(eventBus());
-        return listener;
+    public EventSourcingRepository<Account> accountRepository(EventBus eventBus, EventStore eventStore) {
+        EventSourcingRepository<Account> repository = new EventSourcingRepository<>(Account.class, eventStore);
+        repository.setEventBus(eventBus);
+        return repository;
+    }
+
+    @Bean
+    public AnnotationEventListenerBeanPostProcessor annotationEventListenerBeanPostProcessor(EventBus eventBus) {
+        AnnotationEventListenerBeanPostProcessor result = new AnnotationEventListenerBeanPostProcessor();
+        result.setEventBus(eventBus);
+        return result;
     }
 
     @Bean
     public CommandBus commandBus() {
         return new SimpleCommandBus();
+//    return new DisruptorCommandBus(eventStore(), eventBus());
+    }
+
+    @Bean
+    public EventTemplate eventTemplate(EventBus eventBus) {
+        return new EventTemplate(eventBus);
+    }
+
+    @Bean
+    public AggregateAnnotationCommandHandler<Recipe> commandHandler(Repository<Recipe> recipeRepository, CommandBus commandBus) {
+        return AggregateAnnotationCommandHandler.subscribe(Recipe.class, recipeRepository, commandBus);
     }
 
     public static void main(String[] args) {
